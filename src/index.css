@@ -1,111 +1,91 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+@layer base {
+  html {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  body {
+    @apply bg-slate-950 text-slate-100;
   }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { @apply bg-slate-900; }
+  ::-webkit-scrollbar-thumb { @apply bg-slate-700 rounded-full; }
 }
 
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+@layer components {
+  /* ── Cards ─────────────────────────────────────── */
+  .card {
+    @apply bg-slate-900 border border-slate-800 rounded-2xl;
   }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+  .card-padded {
+    @apply card p-5;
   }
-}
-p {
-  margin: 0;
-}
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+  /* ── Section headings ───────────────────────────── */
+  .section-label {
+    @apply text-[11px] font-semibold tracking-[0.12em] uppercase text-slate-500;
+  }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  /* ── Stat typography ───────────────────────────── */
+  .stat-num {
+    @apply text-3xl font-bold text-slate-50 tabular-nums leading-none;
+  }
+
+  /* ── Pill badge ─────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  /* ── Thin progress track ───────────────────────── */
+  .bar-track {
+    @apply w-full h-1.5 rounded-full bg-slate-800 overflow-hidden;
+  }
+
+  .bar-fill {
+    @apply h-full rounded-full transition-all duration-700 ease-out;
+  }
+
+  /* ── Form elements ─────────────────────────────── */
+  .input {
+    @apply w-full rounded-xl bg-slate-800 border border-slate-700
+           text-slate-100 placeholder-slate-500 text-sm px-4 py-2.5
+           focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30
+           transition-colors;
+  }
+
+  .label {
+    @apply block text-xs font-medium text-slate-400 mb-1.5;
+  }
+
+  /* ── Buttons ───────────────────────────────────── */
+  .btn-primary {
+    @apply flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+           bg-teal-500 text-slate-950 text-sm font-semibold
+           hover:bg-teal-400 active:scale-95
+           disabled:opacity-40 disabled:cursor-not-allowed
+           transition-all duration-150;
+  }
+
+  .btn-ghost {
+    @apply flex items-center justify-center gap-2 px-4 py-2 rounded-xl
+           border border-slate-700 text-slate-300 text-sm font-medium
+           hover:bg-slate-800 hover:border-slate-600 active:scale-95
+           disabled:opacity-40 disabled:cursor-not-allowed
+           transition-all duration-150;
+  }
+
+  /* ── Table ─────────────────────────────────────── */
+  .tbl-head {
+    @apply text-left section-label px-4 py-3;
+  }
+
+  .tbl-cell {
+    @apply px-4 py-3 text-sm text-slate-300;
+  }
 }

@@ -1,122 +1,116 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// src/App.jsx
+import { useState, useEffect } from 'react'
+import Header        from './components/Header.jsx'
+import SummaryCards  from './components/SummaryCards.jsx'
+import Charts        from './components/Charts.jsx'
+import InsightsPanel from './components/InsightsPanel.jsx'
+import StepTable     from './components/StepTable.jsx'
+import {
+  parseDailyCsv,
+  parseMonthlyCsv,
+  parseYearlyCsv,
+  parseStreakCsv,
+} from './utils/csvParser.js'
+import { buildStreakHistory } from './utils/calculations.js'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [entries,       setEntries]       = useState([])
+  const [monthlyData,   setMonthlyData]   = useState([])
+  const [yearlyData,    setYearlyData]    = useState([])
+  const [streakHistory, setStreakHistory] = useState(null)
+  const [loading,       setLoading]       = useState(true)
+  const [error,         setError]         = useState(null)
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+  useEffect(() => {
+    async function loadAll() {
+      try {
+        const [dailyRes, monthlyRes, yearlyRes, streakRes] = await Promise.all([
+          fetch('/activity-export-daily.csv'),
+          fetch('/activity-export-monthly.csv'),
+          fetch('/activity-export-yearly.csv'),
+          fetch('/activity-export-streak.csv'),
+        ])
+
+        const [dailyText, monthlyText, yearlyText, streakText] = await Promise.all([
+          dailyRes.text(),
+          monthlyRes.text(),
+          yearlyRes.text(),
+          streakRes.text(),
+        ])
+
+        const { entries: dailyEntries } = parseDailyCsv(dailyText)
+        const monthly  = parseMonthlyCsv(monthlyText)
+        const yearly   = parseYearlyCsv(yearlyText)
+        const streakRows = parseStreakCsv(streakText)
+        const streakHist = buildStreakHistory(streakRows)
+
+        setEntries(dailyEntries)
+        setMonthlyData(monthly)
+        setYearlyData(yearly)
+        setStreakHistory(streakHist)
+      } catch (err) {
+        console.error(err)
+        setError('Could not load CSV files. Make sure they are in the public/ folder.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadAll()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <p className="text-slate-500 text-sm animate-pulse">Loading your data…</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
+        <div className="card-padded max-w-md text-center">
+          <p className="text-rose-400 text-sm font-medium">⚠ {error}</p>
+          <p className="text-slate-600 text-xs mt-2">
+            Expected files in <code className="text-slate-400">public/</code>:<br />
+            activity-export-daily.csv<br />
+            activity-export-monthly.csv<br />
+            activity-export-yearly.csv<br />
+            activity-export-streak.csv
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </div>
+    )
+  }
 
-      <div className="ticks"></div>
+  return (
+    <div className="min-h-screen bg-slate-950">
+      <Header onLogClick={null} onExport={null} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-10">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-50 tracking-tight">
+            Your Steps Dashboard
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">
+            {entries.length.toLocaleString()} days tracked · 5k goal until 2026, 10k goal from 2026
+          </p>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <SummaryCards entries={entries} />
+        <Charts
+          entries={entries}
+          monthlyData={monthlyData}
+          yearlyData={yearlyData}
+        />
+        <InsightsPanel />
+        <StepTable entries={entries} onEdit={null} onDelete={null} />
+      </main>
+
+      <footer className="text-center text-slate-800 text-xs py-8 font-mono border-t border-slate-900 mt-4">
+        StepWise · your data, your device
+      </footer>
+    </div>
   )
 }
-
-export default App
