@@ -130,97 +130,50 @@ export default function SummaryCards({ entries }) {
   const e26           = get2026Entries(entries)
   const annualTotal   = getAnnualTotal(e26)
   const monthTotal    = getMonthTotal(e26)
-  const projected     = getProjectedAnnual(annualTotal)
-  const paceNeeded    = getPaceNeeded(annualTotal)
   const days10k       = get10kDays(e26)
   const bestMonth     = getBestMonth(e26)
   const daysInYear    = getDayOfYear()
-  const daysLeftMonth = getDaysRemainingInMonth()
 
   const annualPct    = Math.round((annualTotal / ANNUAL_GOAL)  * 100)
   const monthPct     = Math.round((monthTotal  / MONTHLY_GOAL) * 100)
-  const projectedPct = Math.round((projected   / ANNUAL_GOAL)  * 100)
 
-  const expectedByNow = Math.round((ANNUAL_GOAL / 365) * daysInYear)
-  const paceDelta     = annualTotal - expectedByNow
-  const paceDeltaStr  = paceDelta >= 0
-    ? `+${Math.abs(paceDelta).toLocaleString()} ahead of pace`
-    : `${Math.abs(paceDelta).toLocaleString()} behind pace`
+return (
+  <section>
 
-  return (
-    <section>
-      <h2 className="section-label mb-4">2026 Snapshot</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
 
-        <Card
-          label="Annual Progress"
-          value={annualTotal.toLocaleString()}
-          sub={`of ${ANNUAL_GOAL.toLocaleString()} · ${annualPct}% there`}
-          pct={annualPct}
-          barColor={annualPct >= 100 ? 'bg-[#00C9B1]' : 'bg-[#FF2D9B]'}
-          badge="2026 goal"
-          badgeColor="bg-[#4A0E8F] text-white"
-        />
+      <Card
+        label="2026 Goal"
+        value="820,656 / 3.65M"
+        badge="22%"
+        pct={22}
+        barColor="bg-[#FF2D9B]"
+        badgeColor="bg-[#4A0E8F] text-white"
+      />
 
-        <Card
-          label="This Month"
-          value={monthTotal.toLocaleString()}
-          sub={`of ${MONTHLY_GOAL.toLocaleString()} · ${daysLeftMonth}d left`}
-          pct={monthPct}
-          barColor={monthPct >= 100 ? 'bg-[#00C9B1]' : monthPct >= 50 ? 'bg-[#FF2D9B]' : 'bg-[#F5A623]'}
-          badge={`${monthPct}%`}
-          badgeColor={monthPct >= 75
-            ? 'bg-[#00C9B1] text-[#1A0030]'
-            : 'bg-[#F5A623] text-[#1A0030]'}
-        />
+      <Card
+        label="This Month"
+        value={monthTotal.toLocaleString()}
+        sub={`${monthTotal.toLocaleString()} / 300,000`}
+        pct={monthPct}
+        barColor={monthPct >= 100 ? 'bg-[#00C9B1]' : monthPct >= 50 ? 'bg-[#FF2D9B]' : 'bg-[#F5A623]'}
+        badge={`${monthPct}%`}
+        badgeColor={monthPct >= 75
+          ? 'bg-[#00C9B1] text-[#1A0030]'
+          : 'bg-[#F5A623] text-[#1A0030]'}
+      />
 
-        <Card
-          label="Daily Pace Needed"
-          value={paceNeeded.toLocaleString()}
-          sub={`steps/day to hit ${(ANNUAL_GOAL / 1_000_000).toFixed(2)}M`}
-          valueColor={
-            paceNeeded <= 10000 ? 'text-[#00897B]' :
-            paceNeeded <= 12000 ? 'text-[#F5A623]' :
-            'text-[#FF2D9B]'
-          }
-          badge={paceNeeded <= 10000 ? 'on track' : 'stretch'}
-          badgeColor={paceNeeded <= 10000
-            ? 'bg-[#00C9B1] text-[#1A0030]'
-            : 'bg-[#FF2D9B] text-white'}
-        />
 
-        <Card
-          label="Projected Total"
-          value={`${(projected / 1_000_000).toFixed(2)}M`}
-          sub={paceDeltaStr}
-          valueColor={projected >= ANNUAL_GOAL ? 'text-[#00897B]' : 'text-[#1A0030]'}
-          pct={projectedPct}
-          barColor={projected >= ANNUAL_GOAL ? 'bg-[#00C9B1]' : 'bg-[#A78BFA]'}
-          badge={projected >= ANNUAL_GOAL ? '🎯 on track' : `${projectedPct}% of goal`}
-          badgeColor={projected >= ANNUAL_GOAL
-            ? 'bg-[#00C9B1] text-[#1A0030]'
-            : 'bg-[#DDD6FE] text-[#4A0E8F]'}
-        />
+      <Card
+        label="10,000 Step Days"
+        value={`${days10k} of ${daysInYear}`}
+        sub="days at or above 10,000 steps"
+        valueColor={days10k > 30 ? 'text-[#00897B]' : 'text-[#1A0030]'}
+        pct={Math.round((days10k / daysInYear) * 100)}
+        barColor="bg-[#00C9B1]"
+      />
 
-        <Card
-          label="10k Days"
-          value={`${days10k} of ${daysInYear}`}
-          sub="days at or above 10,000 steps"
-          valueColor={days10k > 30 ? 'text-[#00897B]' : 'text-[#1A0030]'}
-          pct={Math.round((days10k / daysInYear) * 100)}
-          barColor="bg-[#00C9B1]"
-        />
-
-        <Card
-          label="Best Month"
-          value={bestMonth.total.toLocaleString()}
-          sub={`${bestMonth.label} · your 2026 high`}
-          valueColor="text-[#F5A623]"
-          badge="🏆"
-          badgeColor="bg-[#F5A623] text-[#1A0030]"
-        />
-
-      </div>
-    </section>
-  )
+    </div>
+  </section>
+)
 }

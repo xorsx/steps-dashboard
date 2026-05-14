@@ -98,7 +98,7 @@ function Legend({ color, label, dashed }) {
 function DailyChart({ entries }) {
   const data = getDailyChartData(entries, 30)
   return (
-    <ChartCard title="Daily Steps — Last 30 Days" barStyle="pink">
+    <ChartCard title="This Month" barStyle="pink">
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} barCategoryGap="28%" margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={C.grid} />
@@ -140,7 +140,7 @@ function MonthlyProgressChart({ monthlyData }) {
   })
 
   return (
-    <ChartCard title="Monthly Totals — 2026" subtitle="Jan–Apr · goal is 300,000 steps/month" barStyle="teal">
+    <ChartCard title="This Year" subtitle="Jan–Apr · goal is 300,000 steps/month" barStyle="teal">
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} barCategoryGap="30%" margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={C.grid} />
@@ -213,7 +213,7 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
   return (
     <div className="flex flex-col gap-4">
       <ChartCard
-        title="Yearly Step Totals"
+        title="Historical Data"
         subtitle={selectedYear ? `Click same bar or ✕ to close` : 'Click any bar to see monthly breakdown'}
         barStyle="amber"
       >
@@ -302,7 +302,16 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
 export default function Charts({ entries, monthlyData, yearlyData }) {
   return (
     <section>
-      <h2 className="section-label mb-4">Charts</h2>
+    <h2 style={{
+  fontFamily: '"Bubblicious", sans-serif',
+  fontSize: 'clamp(28px, 5vw, 48px)',
+  color: 'white',
+  textAlign: 'center',
+  textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
+  marginBottom: '24px',
+}}>
+  Data Breakdown
+</h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="lg:col-span-2">
           <DailyChart entries={entries} />
