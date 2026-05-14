@@ -2,90 +2,330 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Bubblicious';
+  src: url('/fonts/Bubblicious.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'BubbliciousCollege';
+  src: url('/fonts/BubbliciousCollege.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'TroglodytePop';
+  src: url('/fonts/TROGLOP_.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Troglodyte';
+  src: url('/fonts/TROGLO__.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Stora';
+  src: url('/fonts/Stora.otf') format('opentype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'StoraLight';
+  src: url('/fonts/Stora-Light.otf') format('opentype');
+  font-weight: normal;
+}
+
 @layer base {
   html {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   body {
-    @apply bg-slate-950 text-slate-100;
+    background-image: url('/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #1A0030;
+    min-height: 100vh;
   }
 
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { @apply bg-slate-900; }
-  ::-webkit-scrollbar-thumb { @apply bg-slate-700 rounded-full; }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 0, 60, 0.45);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: rgba(237, 233, 254, 0.3); }
+  ::-webkit-scrollbar-thumb {
+    background: #FF2D9B;
+    border-radius: 999px;
+    border: 2px solid transparent;
+  }
 }
 
 @layer components {
-  /* ── Cards ─────────────────────────────────────── */
-  .card {
-    @apply bg-slate-900 border border-slate-800 rounded-2xl;
+
+  /* ── Bubble card ─────────────────────────────────────────── */
+  .win {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    border-radius: 24px;
+    box-shadow:
+      0 12px 40px rgba(106, 33, 168, 0.3),
+      0 4px 12px rgba(255, 45, 155, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(106, 33, 168, 0.1);
+    overflow: hidden;
   }
 
-  .card-padded {
-    @apply card p-5;
+  /* ── shared win-bar base ─────────────────────────────────── */
+  .win-bar,
+  .win-bar-teal,
+  .win-bar-amber,
+  .win-bar-purple {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    font-family: 'TroglodytePop', sans-serif;
+    font-size: clamp(15px, 1.6vw, 20px);
+    font-weight: normal;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    color: white;
+    /* prevent text overflow */
+    min-width: 0;
   }
 
-  /* ── Section headings ───────────────────────────── */
+  /* title text inside bar should truncate gracefully */
+  .win-bar > span:first-child,
+  .win-bar-teal > span:first-child,
+  .win-bar-amber > span:first-child,
+  .win-bar-purple > span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .win-bar        { background: linear-gradient(135deg, #FF2D9B 0%, #d4006e 100%); }
+  .win-bar-teal   { background: linear-gradient(135deg, #00C9B1 0%, #00897B 100%); }
+  .win-bar-amber  { background: linear-gradient(135deg, #F5A623 0%, #d4880a 100%); color: #1A0030; }
+  .win-bar-purple { background: linear-gradient(135deg, #7C3AED 0%, #4A0E8F 100%); }
+
+  /* ── Card body ───────────────────────────────────────────── */
+  .win-body {
+    padding: 16px;
+    background: transparent;
+  }
+
+  .win-body-white {
+    padding: 16px;
+    background: rgba(255,255,255,0.5);
+  }
+
+  /* ── Chrome buttons ──────────────────────────────────────── */
+  .chrome-btns {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  .chrome-btn {
+    width: 13px;
+    height: 13px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.8);
+    cursor: default;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .chrome-btn:hover {
+    background: rgba(255,255,255,0.7);
+    color: #1A0030;
+  }
+
+  /* ── Section label (between sections) ───────────────────── */
   .section-label {
-    @apply text-[11px] font-semibold tracking-[0.12em] uppercase text-slate-500;
+    font-family: 'Stora', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(237, 233, 254, 0.9);
   }
 
-  /* ── Stat typography ───────────────────────────── */
+  /* ── Stat number — VT323 pixel font ─────────────────────── */
   .stat-num {
-    @apply text-3xl font-bold text-slate-50 tabular-nums leading-none;
+    font-family: 'VT323', monospace;
+    font-size: 2.4rem;
+    line-height: 1;
+    color: #1A0030;
   }
 
-  /* ── Pill badge ─────────────────────────────────── */
-  .badge {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold;
-  }
-
-  /* ── Thin progress track ───────────────────────── */
+  /* ── Progress bar ────────────────────────────────────────── */
   .bar-track {
-    @apply w-full h-1.5 rounded-full bg-slate-800 overflow-hidden;
+    width: 100%;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(167, 139, 250, 0.25);
+    overflow: hidden;
   }
 
   .bar-fill {
-    @apply h-full rounded-full transition-all duration-700 ease-out;
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.7s ease-out;
   }
 
-  /* ── Form elements ─────────────────────────────── */
-  .input {
-    @apply w-full rounded-xl bg-slate-800 border border-slate-700
-           text-slate-100 placeholder-slate-500 text-sm px-4 py-2.5
-           focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30
-           transition-colors;
+  /* ── Badge ───────────────────────────────────────────────── */
+  .badge {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 999px;
   }
 
-  .label {
-    @apply block text-xs font-medium text-slate-400 mb-1.5;
-  }
-
-  /* ── Buttons ───────────────────────────────────── */
+  /* ── Buttons ─────────────────────────────────────────────── */
   .btn-primary {
-    @apply flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
-           bg-teal-500 text-slate-950 text-sm font-semibold
-           hover:bg-teal-400 active:scale-95
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-150;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 22px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #FF2D9B, #d4006e);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 45, 155, 0.4);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 45, 155, 0.5);
+  }
+
+  .btn-primary:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(255, 45, 155, 0.3);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
   }
 
   .btn-ghost {
-    @apply flex items-center justify-center gap-2 px-4 py-2 rounded-xl
-           border border-slate-700 text-slate-300 text-sm font-medium
-           hover:bg-slate-800 hover:border-slate-600 active:scale-95
-           disabled:opacity-40 disabled:cursor-not-allowed
-           transition-all duration-150;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    backdrop-filter: blur(8px);
+    transition: all 0.15s;
+    cursor: pointer;
   }
 
-  /* ── Table ─────────────────────────────────────── */
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .btn-ghost:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ── Form inputs ─────────────────────────────────────────── */
+  .input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    border: 1.5px solid rgba(167, 139, 250, 0.5);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    color: #1A0030;
+    padding: 9px 14px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .input:focus {
+    border-color: #FF2D9B;
+    box-shadow: 0 0 0 3px rgba(255, 45, 155, 0.15);
+  }
+
+  .label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    color: #4A1A6B;
+    margin-bottom: 6px;
+  }
+
+  /* ── Table ───────────────────────────────────────────────── */
   .tbl-head {
-    @apply text-left section-label px-4 py-3;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-align: left;
+    padding: 10px 14px;
+    color: #4A1A6B;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(167, 139, 250, 0.3);
+    background: rgba(221, 214, 254, 0.4);
   }
 
   .tbl-cell {
-    @apply px-4 py-3 text-sm text-slate-300;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    color: #1A0030;
+    border-bottom: 1px solid rgba(167, 139, 250, 0.2);
   }
 }

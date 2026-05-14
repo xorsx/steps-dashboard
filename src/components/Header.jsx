@@ -1,44 +1,44 @@
-// src/components/Header.jsx
-// ─────────────────────────────────────────────────────────────
-// Top navigation bar.
-// Props:
-//   onLogClick  – called when "+ Log Steps" is pressed (Phase 2)
-//   onExport    – called when "Export CSV" is pressed (Phase 3)
-// ─────────────────────────────────────────────────────────────
-
-export default function Header({ onLogClick, onExport }) {
+export default function Header() {
   return (
-    <header className="sticky top-0 z-20 bg-slate-950/80 backdrop-blur border-b border-slate-800/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-
-        {/* Brand */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          <span className="text-xl select-none" aria-hidden>🥾</span>
-          <span className="font-bold text-slate-50 tracking-tight text-lg leading-none">
-            Step<span className="text-teal-400">Wise</span>
-          </span>
-          <span className="hidden sm:inline badge bg-slate-800 text-slate-500 ml-1">10k</span>
+    <header style={{
+      background: 'rgba(30, 0, 60, 0.5)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
+      borderBottom: '1px solid rgba(255,255,255,0.15)',
+    }} className="sticky top-0 z-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col items-center justify-center text-center gap-1.5">
+        <div className="flex items-center gap-3 flex-wrap justify-center">
+          <span style={{
+            fontFamily: '"Bubblicious", sans-serif',
+            fontSize: 'clamp(24px, 5vw, 44px)',
+            color: '#FF2D9B',
+            textShadow: '0 2px 12px rgba(255,45,155,0.6)',
+          }}>♥</span>
+          <h1 style={{
+            fontFamily: '"Bubblicious", sans-serif',
+            fontSize: 'clamp(28px, 6vw, 52px)',
+            color: 'white',
+            lineHeight: 1.1,
+            textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
+          }}>
+            Liv's Step Tracker
+          </h1>
+          <span style={{
+            fontFamily: '"Bubblicious", sans-serif',
+            fontSize: 'clamp(24px, 5vw, 44px)',
+            color: '#FF2D9B',
+            textShadow: '0 2px 12px rgba(255,45,155,0.6)',
+          }}>♥</span>
         </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onExport}
-            disabled={!onExport}
-            className="btn-ghost text-xs py-1.5 hidden sm:flex"
-          >
-            ↓ Export CSV
-          </button>
-
-          <button
-            onClick={onLogClick}
-            disabled={!onLogClick}
-            className="btn-primary text-xs py-1.5"
-          >
-            <span className="text-base leading-none font-bold">+</span>
-            Log Steps
-          </button>
-        </div>
+        <p style={{
+          fontFamily: '"Bubblicious", sans-serif',
+          fontSize: 'clamp(11px, 1.5vw, 14px)',
+          color: 'rgba(221, 214, 254, 0.8)',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+        }}>
+          personal 10k steps dashboard · 2026
+        </p>
       </div>
     </header>
   )
