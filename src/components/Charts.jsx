@@ -30,14 +30,78 @@ const axisStyle = {
   tickLine: false,
 }
 
-const tooltipStyle = {
-  backgroundColor: 'rgba(255,255,255,0.95)',
-  border: '1.5px solid rgba(167,139,250,0.5)',
-  borderRadius: '14px',
-  fontSize: '13px',
-  fontFamily: 'DM Sans, sans-serif',
-  color: '#1A0030',
-  boxShadow: '0 8px 24px rgba(106,33,168,0.15)',
+// ── Custom tooltip ────────────────────────────────────────────
+function WindowTooltip({ active, payload, label }) {
+  if (!active || !payload || !payload.length) return null
+
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.95)',
+      backdropFilter: 'blur(16px)',
+      border: '1.5px solid rgba(255,255,255,0.9)',
+      borderRadius: '16px',
+      boxShadow: '0 8px 32px rgba(106,33,168,0.25), 0 2px 8px rgba(255,45,155,0.15)',
+      overflow: 'hidden',
+      minWidth: '160px',
+    }}>
+      {/* title bar */}
+      <div style={{
+        background: 'linear-gradient(135deg, #FF2D9B 0%, #d4006e 100%)',
+        padding: '6px 12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid rgba(0,0,0,0.1)',
+      }}>
+        <span style={{
+          fontFamily: '"Bubblicious", sans-serif',
+          fontSize: '12px',
+          color: 'white',
+        }}>
+          {label}
+        </span>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <span style={{
+            width: '12px', height: '12px', borderRadius: '999px',
+            background: 'rgba(255,255,255,0.35)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '7px', color: 'rgba(255,255,255,0.8)', cursor: 'default',
+          }}>─</span>
+          <span style={{
+            width: '12px', height: '12px', borderRadius: '999px',
+            background: 'rgba(255,255,255,0.35)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '7px', color: 'rgba(255,255,255,0.8)', cursor: 'default',
+          }}>✕</span>
+        </div>
+      </div>
+      {/* body */}
+      <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        {payload.map((p, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <span style={{
+              fontFamily: '"DM Sans", sans-serif',
+              fontSize: '11px',
+              color: '#6D28D9',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}>
+              {p.name === 'steps' || p.name === 'total' || p.name === 'avg' ? 'Steps' : p.name}
+            </span>
+            <span style={{
+              fontFamily: '"VT323", monospace',
+              fontSize: '22px',
+              color: p.color || '#1A0030',
+              lineHeight: 1,
+            }}>
+              {typeof p.value === 'number' ? p.value.toLocaleString() : p.value ?? 'No data'}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 // ── Chart card wrapper ────────────────────────────────────────
@@ -102,11 +166,10 @@ function DailyChart({ entries }) {
           <CartesianGrid vertical={false} stroke={C.grid} />
           <XAxis dataKey="date" {...axisStyle} interval={5} />
           <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-          <Tooltip
-            contentStyle={tooltipStyle}
-            formatter={v => [v.toLocaleString(), 'Steps']}
-            cursor={{ fill: 'rgba(167,139,250,0.15)', radius: 4 }}
-          />
+         <Tooltip
+  content={<WindowTooltip />}
+  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
+/>
           <ReferenceLine y={GOAL} stroke={C.teal} strokeDasharray="5 3" strokeWidth={2} />
           <Bar dataKey="steps" radius={[6, 6, 0, 0]}>
             {data.map((d, i) => (
@@ -145,10 +208,9 @@ function MonthlyProgressChart({ monthlyData }) {
           <XAxis dataKey="month" {...axisStyle} />
           <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
           <Tooltip
-            contentStyle={tooltipStyle}
-            formatter={v => [v.toLocaleString(), 'Total steps']}
-            cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-          />
+  content={<WindowTooltip />}
+  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
+/>
           <ReferenceLine y={MONTHLY_GOAL} stroke={C.pink} strokeDasharray="5 3" strokeWidth={2} />
           <Bar dataKey="total" radius={[6, 6, 0, 0]}>
             {data.map((d, i) => (
@@ -227,11 +289,10 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
               <CartesianGrid vertical={false} stroke={C.grid} />
               <XAxis dataKey="year" {...axisStyle} />
               <YAxis {...axisStyle} tickFormatter={v => `${(v / 1_000_000).toFixed(1)}M`} />
-              <Tooltip
-                contentStyle={tooltipStyle}
-                formatter={v => [v.toLocaleString(), 'Total steps']}
-                cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-              />
+             <Tooltip
+  content={<WindowTooltip />}
+  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
+/>
               <Bar dataKey="steps" radius={[6, 6, 0, 0]}>
                 {yearlyChartData.map((d, i) => (
                   <Cell
@@ -273,10 +334,9 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
                 <XAxis dataKey="month" {...axisStyle} />
                 <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
                 <Tooltip
-                  contentStyle={tooltipStyle}
-                  formatter={v => [v ? v.toLocaleString() : 'No data', 'Total steps']}
-                  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-                />
+  content={<WindowTooltip />}
+  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
+/>
                 <Bar dataKey="total" radius={[6, 6, 0, 0]}>
                   {monthlyDrillData.map((d, i) => (
                     <Cell
@@ -304,23 +364,50 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
 export default function Charts({ entries, monthlyData, yearlyData }) {
   return (
     <section>
-      <h2 style={{
-        fontFamily: '"Bubblicious", sans-serif',
-        fontSize: 'clamp(28px, 5vw, 48px)',
-        color: 'white',
-        textAlign: 'center',
-        textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
-        marginBottom: '24px',
-      }}>
-        Data Breakdown
-      </h2>
+   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '24px' }}>
+  <img
+    src="/glasses_hello_kitty.jpg"
+    alt="hello kitty with glasses"
+    style={{
+      width: '56px',
+      height: '56px',
+      objectFit: 'cover',
+      borderRadius: '999px',
+      border: '2px solid #FF2D9B',
+      boxShadow: '0 0 16px rgba(255,45,155,0.4)',
+    }}
+  />
+  <h2 style={{
+    fontFamily: '"Bubblicious", sans-serif',
+    fontSize: 'clamp(28px, 5vw, 48px)',
+    color: 'white',
+    textAlign: 'center',
+    textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
+  }}>
+    Data Breakdown
+  </h2>
+  <img
+    src="/glasses_hello_kitty.jpg"
+    alt=""
+    aria-hidden="true"
+    style={{
+      width: '56px',
+      height: '56px',
+      objectFit: 'cover',
+      borderRadius: '999px',
+      border: '2px solid #FF2D9B',
+      boxShadow: '0 0 16px rgba(255,45,155,0.4)',
+      transform: 'scaleX(-1)',
+    }}
+  />
+</div>
       <div className="flex flex-col gap-4">
 
         {/* Daily — full width */}
         <DailyChart entries={entries} />
 
         {/* Monthly progress + Yearly side by side, equal height */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', alignItems: 'stretch' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'grid-cols-1 lg:grid-cols-2', gap: '16px', alignItems: 'stretch' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <MonthlyProgressChart monthlyData={monthlyData} />
           </div>

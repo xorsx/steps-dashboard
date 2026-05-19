@@ -51,7 +51,11 @@
     background-attachment: fixed;
     color: #1A0030;
     min-height: 100vh;
+    cursor: url('/cursor.cur'), auto;
+    
   }
+  a, button, [role="button"], input, select, textarea, label {
+  cursor: url('/cursor.cur'), auto;}
 
   body::before {
     content: '';

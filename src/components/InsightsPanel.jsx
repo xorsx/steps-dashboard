@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 
 const BEST_BY_YEAR = [
-  { year: '2026', steps: 23707, date: '2026-04-25', label: 'Disclosure show',                            type: 'dancing'  },
+  { year: '2026', steps: 27707, date: '2026-05-16', label: 'Chris Stussy at Junkyard', type: 'dancing' },
   { year: '2025', steps: 38878, date: '2025-08-30', label: 'Arc Festival Day 2 in Chicago, Illinois',    type: 'festival' },
   { year: '2024', steps: 43182, date: '2024-07-26', label: 'Tomorrowland Day 2 in Boom, Belgium',        type: 'festival' },
   { year: '2023', steps: 24092, date: '2023-08-12', label: 'Matroda show',                               type: 'dancing'  },
@@ -298,16 +298,41 @@ function GreatestHits() {
 export default function InsightsPanel() {
   return (
     <section>
-      <h2 style={{
-        fontFamily: '"Bubblicious", sans-serif',
-        fontSize: 'clamp(28px, 5vw, 48px)',
-        color: 'white',
-        textAlign: 'center',
-        textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
-        marginBottom: '24px',
-      }}>
-        What Gets You Moving
-      </h2>
+ <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '24px' }}>
+  <img
+    src="/kitty_dance.gif"
+    alt="dancing hello kitty"
+    style={{
+      width: '64px',
+      height: '64px',
+      objectFit: 'cover',
+      borderRadius: '999px',
+      border: '2px solid #FF2D9B',
+      boxShadow: '0 0 16px rgba(255,45,155,0.4)',
+    }}
+  />
+  <h2 style={{
+    fontFamily: '"Bubblicious", sans-serif',
+    fontSize: 'clamp(28px, 5vw, 48px)',
+    color: 'white',
+    textAlign: 'center',
+    textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
+  }}>
+    What Gets You Moving
+  </h2>
+  <img
+    src="/kuromi_dance.gif"
+    alt="dancing kuromi"
+    style={{
+      width: '64px',
+      height: '64px',
+      objectFit: 'cover',
+      borderRadius: '999px',
+      border: '2px solid #A78BFA',
+      boxShadow: '0 0 16px rgba(167,139,250,0.4)',
+    }}
+  />
+</div>
       <div className="flex flex-col gap-6">
         <ActivityBreakdown />
 

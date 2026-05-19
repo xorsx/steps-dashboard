@@ -58,12 +58,21 @@ function getTopActivity2026(entries) {
 
 // ── card ──────────────────────────────────────────────────────
 
-function Card({ label, bigValue, sub, pct, barColor, children }) {
+function Card({ label, bigValue, sub, pct, barColor, barStyle, children }) {
   const color = barColor || '#FF2D9B'
+
+  const barStyles = {
+    pink:   'win-bar',
+    amber:  'win-bar-amber',
+    teal:   'win-bar-teal',
+    purple: 'win-bar-purple',
+  }
+
+  const barClass = barStyles[barStyle] ?? 'win-bar'
 
   return (
     <div className="win">
-      <div className="win-bar justify-between">
+      <div className={`${barClass} justify-between`}>
         <span>{label}</span>
         <div className="chrome-btns">
           <span className="chrome-btn">─</span>
@@ -133,6 +142,7 @@ export default function SummaryCards({ entries }) {
           sub={`${annualTotal.toLocaleString()} / ${ANNUAL_GOAL.toLocaleString()} steps`}
           pct={annualPct}
           barColor="#FF2D9B"
+          barStyle="#FF2D9B"
         />
 
         <Card
@@ -141,6 +151,7 @@ export default function SummaryCards({ entries }) {
           sub={`${monthTotal.toLocaleString()} / ${MONTHLY_GOAL.toLocaleString()} steps`}
           pct={monthPct}
           barColor="#F5A623"
+          barStyle="amber"
         />
 
         <Card
@@ -149,9 +160,10 @@ export default function SummaryCards({ entries }) {
           sub={`${days10k} of ${daysInYear} days at or above 10,000 steps`}
           pct={days10kPct}
           barColor="#00C9B1"
+          barStyle="teal"
         />
 
-        <Card label="Most Active Doing">
+        <Card label="Most Active Doing"  barStyle="purple">
           <img
             src={topActivity.img}
             alt={topActivity.label}
