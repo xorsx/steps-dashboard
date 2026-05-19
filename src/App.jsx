@@ -83,7 +83,7 @@ export default function App() {
       <Header />
 
       <main style={{ maxWidth: '1600px', margin: '0 auto', padding: '0 24px 60px' }}
-            className="flex flex-col gap-10 pt-8">
+            className="flex flex-col gap-10 pt-16">
 
         <SummaryCards entries={entries} />
         <Charts entries={entries} monthlyData={monthlyData} yearlyData={yearlyData} />
@@ -101,7 +101,7 @@ export default function App() {
         color: 'rgba(221,214,254,0.5)',
         borderTop: '1px solid rgba(255,255,255,0.1)',
       }}>
-        Liv's Step Tracker ♥ · your data, your device
+        Liv's Step Tracker · Coded with ♥ · 2026
       </footer>
     </div>
   )

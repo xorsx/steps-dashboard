@@ -1,4 +1,5 @@
 // src/components/InsightsPanel.jsx
+import { useState, useEffect, useRef } from 'react'
 
 const BEST_BY_YEAR = [
   { year: '2026', steps: 23707, date: '2026-04-25', label: 'Disclosure show',                            type: 'dancing'  },
@@ -14,13 +15,20 @@ const BEST_BY_YEAR = [
 ]
 
 const ACTIVITY_SUMMARY = [
-  { type: 'festival', label: 'Music festivals',     emoji: '🎪', avg: 30348, n: 8,   note: 'Tomorrowland & Arc' },
-  { type: 'hike',     label: 'Hiking days',         emoji: '🥾', avg: 15670, n: 36,  note: '36 logged hike days' },
-  { type: 'dancing',  label: 'Dancing nights',      emoji: '💃', avg: 13831, n: 30,  note: '30 nights out' },
-  { type: 'travel',   label: 'Travel & city trips', emoji: '✈️', avg: 9824,  n: 210, note: 'Active days only, transit excluded' },
+  { type: 'festival', label: 'Music festivals',     img: '/music_festival_hello_kitty.jpg', avg: 30348, n: 8,   note: 'Tomorrowland & Arc' },
+  { type: 'hike',     label: 'Hiking days',         img: '/hiker_hello_kitty.jpg',          avg: 15670, n: 36,  note: '36 logged hike days' },
+  { type: 'dancing',  label: 'Dancing nights',      img: '/dancing_hello_kitty.jpg',        avg: 13831, n: 30,  note: '30 nights out' },
+  { type: 'travel',   label: 'Travel & city trips', img: '/traveling_hello_kitty.jpg',      avg: 9824,  n: 210, note: 'Active days only, transit excluded' },
 ]
 
 const BASELINE = 3159
+
+const TYPE_IMAGES = {
+  festival: '/music_festival_hello_kitty.jpg',
+  hike:     '/hiker_hello_kitty.jpg',
+  dancing:  '/dancing_hello_kitty.jpg',
+  travel:   '/traveling_hello_kitty.jpg',
+}
 
 function pctAbove(avg) {
   return Math.round(((avg - BASELINE) / BASELINE) * 100)
@@ -50,13 +58,15 @@ function InsightSection({ title, subtitle, children, barStyle = 'purple' }) {
   }
   return (
     <div className="win">
-      <div className={bars[barStyle] ?? 'win-bar-purple'}>
-        <span>{title}</span>
-        <div className="chrome-btns">
-          <span className="chrome-btn">─</span>
-          <span className="chrome-btn">✕</span>
+      {title && (
+        <div className={bars[barStyle] ?? 'win-bar-purple'}>
+          <span>{title}</span>
+          <div className="chrome-btns">
+            <span className="chrome-btn">─</span>
+            <span className="chrome-btn">✕</span>
+          </div>
         </div>
-      </div>
+      )}
       <div className="win-body flex flex-col gap-2">
         {subtitle && (
           <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', color: '#6D28D9', marginBottom: '8px' }}>
@@ -69,12 +79,14 @@ function InsightSection({ title, subtitle, children, barStyle = 'purple' }) {
   )
 }
 
+// ── Activity Breakdown ────────────────────────────────────────
+
 function ActivityBreakdown() {
   const maxAvg = Math.max(...ACTIVITY_SUMMARY.map(a => a.avg))
 
   return (
     <InsightSection
-      title="✮ ⋆ ˚｡𖦹 ⋆｡°✩✮ ⋆ ˚｡𖦹 ⋆｡°✩✮ ⋆ ˚｡𖦹 ⋆｡°✩✮ ⋆ ˚｡𖦹 ⋆｡°✩✮ ⋆ ˚｡𖦹 ⋆｡°✩✮ ⋆ ˚｡𖦹 ⋆｡°✩✮ ⋆ ˚｡𖦹 ⋆｡°✩✮ ⋆ ˚｡𖦹 ⋆｡°✩"
+      title="˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮"
       subtitle={`Compared to your all-time daily baseline of ${BASELINE.toLocaleString()} steps`}
       barStyle="pink"
     >
@@ -88,7 +100,18 @@ function ActivityBreakdown() {
             <div key={i} className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-base leading-none">{a.emoji}</span>
+                  <img
+                    src={a.img}
+                    alt={a.label}
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      objectFit: 'cover',
+                      borderRadius: '999px',
+                      border: '1.5px solid #1A0030',
+                      flexShrink: 0,
+                    }}
+                  />
                   <span style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '15px', fontWeight: 700 }}
                         className="text-[#1A0030]">
                     {a.label}
@@ -105,21 +128,14 @@ function ActivityBreakdown() {
                   </span>
                   <span
                     className="badge text-[9px]"
-                    style={{
-                      background: c.badgeBg,
-                      color: c.badgeText,
-                      border: '1px solid #1A0030',
-                    }}
+                    style={{ background: c.badgeBg, color: c.badgeText, border: '1px solid #1A0030' }}
                   >
                     +{above}%
                   </span>
                 </div>
               </div>
               <div className="bar-track">
-                <div
-                  className="bar-fill"
-                  style={{ width: `${pct}%`, background: c.bar }}
-                />
+                <div className="bar-fill" style={{ width: `${pct}%`, background: c.bar }} />
               </div>
             </div>
           )
@@ -140,23 +156,44 @@ function ActivityBreakdown() {
   )
 }
 
+// ── Greatest Hits ─────────────────────────────────────────────
+
 function GreatestHits() {
+  const [animated, setAnimated] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAnimated(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
   const max = Math.max(...BEST_BY_YEAR.map(d => d.steps))
 
   return (
     <InsightSection
-      title="𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹𖤐ᝰ.ᐟ𖦹₊⊹"
+    title="˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮˙⋆✮"
       subtitle="Your single best day each year and what you were doing"
       barStyle="amber"
     >
-      <div className="flex flex-col gap-3">
+      <div ref={ref} className="flex flex-col gap-4">
         {BEST_BY_YEAR.map((day, i) => {
           const c      = typeColors(day.type)
           const pct    = Math.round((day.steps / max) * 100)
           const isPeak = day.steps === max
+          const img    = TYPE_IMAGES[day.type]
 
           return (
             <div key={i} className="flex flex-col gap-1.5">
+
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-4">
                   <span style={{
@@ -181,27 +218,62 @@ function GreatestHits() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {isPeak && (
-                    <span
-                      className="badge text-[9px]"
-                      style={{ background: '#F5A623', color: '#1A0030', border: '1px solid #1A0030' }}
-                    >
+                    <span className="badge text-[9px]"
+                          style={{ background: '#F5A623', color: '#1A0030', border: '1px solid #1A0030' }}>
                       🏆 best ever
                     </span>
                   )}
-                  <span
-                    style={{ fontFamily: '"VT323", monospace', fontSize: '22px', color: isPeak ? '#F5A623' : '#1A0030' }}
-                    className="tabular-nums"
-                  >
+                  <span style={{ fontFamily: '"VT323", monospace', fontSize: '22px',
+                                 color: isPeak ? '#F5A623' : '#1A0030' }}
+                        className="tabular-nums">
                     {day.steps.toLocaleString()}
                   </span>
                 </div>
               </div>
-              <div className="bar-track">
-                <div
-                  className="bar-fill"
-                  style={{ width: `${pct}%`, background: c.bar }}
-                />
+
+              <div style={{ position: 'relative', height: '28px', display: 'flex', alignItems: 'center' }}>
+                <div style={{
+                  width: '100%',
+                  height: '10px',
+                  borderRadius: '999px',
+                  background: 'rgba(167,139,250,0.25)',
+                  position: 'relative',
+                  overflow: 'visible',
+                }}>
+                  <div style={{
+                    width: animated ? `${pct}%` : '0%',
+                    height: '10px',
+                    borderRadius: '999px',
+                    background: c.bar,
+                    transition: `width 1s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.1}s`,
+                    position: 'relative',
+                    overflow: 'visible',
+                  }}>
+                    {img && (
+                      <img
+                        src={img}
+                        alt=""
+                        aria-hidden="true"
+                        style={{
+                          position: 'absolute',
+                          right: '-14px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '999px',
+                          objectFit: 'cover',
+                          border: `2px solid ${c.bar}`,
+                          boxShadow: `0 2px 8px ${c.bar}88`,
+                          background: 'white',
+                          pointerEvents: 'none',
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
+
             </div>
           )
         })}
@@ -221,6 +293,8 @@ function GreatestHits() {
   )
 }
 
+// ── Main export ───────────────────────────────────────────────
+
 export default function InsightsPanel() {
   return (
     <section>
@@ -234,20 +308,22 @@ export default function InsightsPanel() {
       }}>
         What Gets You Moving
       </h2>
-      <ActivityBreakdown />
+      <div className="flex flex-col gap-6">
+        <ActivityBreakdown />
 
-      <h2 style={{
-        fontFamily: '"Bubblicious", sans-serif',
-        fontSize: 'clamp(28px, 5vw, 48px)',
-        color: 'white',
-        textAlign: 'center',
-        textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
-        marginTop: '48px',
-        marginBottom: '24px',
-      }}>
-        Personal Record by Year
-      </h2>
-      <GreatestHits />
+        <h2 style={{
+          fontFamily: '"Bubblicious", sans-serif',
+          fontSize: 'clamp(28px, 5vw, 48px)',
+          color: 'white',
+          textAlign: 'center',
+          textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
+          marginTop: '24px',
+          marginBottom: '24px',
+        }}>
+          Personal Record by Year
+        </h2>
+        <GreatestHits />
+      </div>
     </section>
   )
 }

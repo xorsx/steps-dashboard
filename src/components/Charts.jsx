@@ -49,13 +49,11 @@ function ChartCard({ title, subtitle, children, barStyle = 'pink' }) {
     purple: 'win-bar-purple',
   }
   return (
-    <div className="win">
+    <div className="win" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div className={bars[barStyle] ?? 'win-bar'}>
         <span style={{
-          fontFamily: '"Syne", sans-serif',
+          fontFamily: '"Bubblicious", sans-serif',
           fontSize: 'clamp(14px, 1.8vw, 18px)',
-          fontWeight: 800,
-          letterSpacing: '-0.01em',
         }}>
           {title}
         </span>
@@ -65,7 +63,7 @@ function ChartCard({ title, subtitle, children, barStyle = 'pink' }) {
           <span className="chrome-btn">✕</span>
         </div>
       </div>
-      <div className="win-body">
+      <div className="win-body" style={{ flex: 1 }}>
         {subtitle && (
           <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '12px', color: '#6D28D9', marginBottom: '12px' }}>
             {subtitle}
@@ -211,88 +209,92 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <ChartCard
-        title="Historical Data"
-        subtitle={selectedYear ? `Click same bar or ✕ to close` : 'Click any bar to see monthly breakdown'}
-        barStyle="amber"
-      >
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart
-            data={yearlyChartData}
-            barCategoryGap="25%"
-            margin={{ top: 4, right: 4, left: -8, bottom: 0 }}
-            onClick={handleBarClick}
-            style={{ cursor: 'pointer' }}
-          >
-            <CartesianGrid vertical={false} stroke={C.grid} />
-            <XAxis dataKey="year" {...axisStyle} />
-            <YAxis {...axisStyle} tickFormatter={v => `${(v / 1_000_000).toFixed(1)}M`} />
-            <Tooltip
-              contentStyle={tooltipStyle}
-              formatter={v => [v.toLocaleString(), 'Total steps']}
-              cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-            />
-            <Bar dataKey="steps" radius={[6, 6, 0, 0]}>
-              {yearlyChartData.map((d, i) => (
-                <Cell
-                  key={i}
-                  fill={d.steps >= d.goal ? C.teal : C.purple}
-                  fillOpacity={selectedYear && d.year !== selectedYear ? 0.3 : 0.9}
-                  stroke={d.year === selectedYear ? C.pink : 'transparent'}
-                  strokeWidth={2}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-        <div className="flex items-center gap-4 mt-3 flex-wrap">
-          <Legend color={C.teal}   label="Goal met" />
-          <Legend color={C.purple} label="Below goal" />
-          {selectedYear && (
-            <button
-              onClick={() => setSelectedYear(null)}
-              style={{ fontFamily: '"DM Sans"', fontSize: '12px', color: '#6D28D9', marginLeft: 'auto', fontWeight: 600 }}
-            >
-              ✕ Close {selectedYear}
-            </button>
-          )}
-        </div>
-      </ChartCard>
-
-      {selectedYear && monthlyDrillData && (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
+      <div style={{ flex: selectedYear ? '0 0 auto' : '1', display: 'flex', flexDirection: 'column' }}>
         <ChartCard
-          title={`${selectedYear} — Monthly Totals`}
-          subtitle={`Goal was ${selectedYear >= '2026' ? '10,000' : '5,000'} steps/day`}
-          barStyle="purple"
+          title="Over the years"
+          subtitle={selectedYear ? 'Click same bar or ✕ to close' : 'Click any bar to see monthly breakdown'}
+          barStyle="amber"
         >
-          <ResponsiveContainer width="100%" height={210}>
-            <BarChart data={monthlyDrillData} barCategoryGap="25%" margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={selectedYear ? 180 : 260}>
+            <BarChart
+              data={yearlyChartData}
+              barCategoryGap="25%"
+              margin={{ top: 4, right: 4, left: -8, bottom: 0 }}
+              onClick={handleBarClick}
+              style={{ cursor: 'pointer' }}
+            >
               <CartesianGrid vertical={false} stroke={C.grid} />
-              <XAxis dataKey="month" {...axisStyle} />
-              <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
+              <XAxis dataKey="year" {...axisStyle} />
+              <YAxis {...axisStyle} tickFormatter={v => `${(v / 1_000_000).toFixed(1)}M`} />
               <Tooltip
                 contentStyle={tooltipStyle}
-                formatter={v => [v ? v.toLocaleString() : 'No data', 'Total steps']}
+                formatter={v => [v.toLocaleString(), 'Total steps']}
                 cursor={{ fill: 'rgba(167,139,250,0.15)' }}
               />
-              <Bar dataKey="total" radius={[6, 6, 0, 0]}>
-                {monthlyDrillData.map((d, i) => (
+              <Bar dataKey="steps" radius={[6, 6, 0, 0]}>
+                {yearlyChartData.map((d, i) => (
                   <Cell
                     key={i}
-                    fill={d.total === null ? C.muted : d.total >= d.goal ? C.teal : C.pink}
-                    fillOpacity={d.total === null ? 0.3 : 0.9}
+                    fill={d.steps >= d.goal ? C.teal : C.purple}
+                    fillOpacity={selectedYear && d.year !== selectedYear ? 0.3 : 0.9}
+                    stroke={d.year === selectedYear ? C.pink : 'transparent'}
+                    strokeWidth={2}
                   />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-          <div className="flex gap-4 mt-3 flex-wrap">
-            <Legend color={C.teal}  label="Goal met" />
-            <Legend color={C.pink}  label="Below goal" />
-            <Legend color={C.muted} label="No data" />
+          <div className="flex items-center gap-4 mt-3 flex-wrap">
+            <Legend color={C.teal}   label="Goal met" />
+            <Legend color={C.purple} label="Below goal" />
+            {selectedYear && (
+              <button
+                onClick={() => setSelectedYear(null)}
+                style={{ fontFamily: '"DM Sans"', fontSize: '12px', color: '#6D28D9', marginLeft: 'auto', fontWeight: 600 }}
+              >
+                ✕ Close {selectedYear}
+              </button>
+            )}
           </div>
         </ChartCard>
+      </div>
+
+      {selectedYear && monthlyDrillData && (
+        <div style={{ flex: '1', display: 'flex', flexDirection: 'column' }}>
+          <ChartCard
+            title={`${selectedYear} — Monthly Totals`}
+            subtitle={`Goal was ${selectedYear >= '2026' ? '10,000' : '5,000'} steps/day`}
+            barStyle="purple"
+          >
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={monthlyDrillData} barCategoryGap="25%" margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
+                <CartesianGrid vertical={false} stroke={C.grid} />
+                <XAxis dataKey="month" {...axisStyle} />
+                <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  formatter={v => [v ? v.toLocaleString() : 'No data', 'Total steps']}
+                  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
+                />
+                <Bar dataKey="total" radius={[6, 6, 0, 0]}>
+                  {monthlyDrillData.map((d, i) => (
+                    <Cell
+                      key={i}
+                      fill={d.total === null ? C.muted : d.total >= d.goal ? C.teal : C.pink}
+                      fillOpacity={d.total === null ? 0.3 : 0.9}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="flex gap-4 mt-3 flex-wrap">
+              <Legend color={C.teal}  label="Goal met" />
+              <Legend color={C.pink}  label="Below goal" />
+              <Legend color={C.muted} label="No data" />
+            </div>
+          </ChartCard>
+        </div>
       )}
     </div>
   )
@@ -302,22 +304,31 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
 export default function Charts({ entries, monthlyData, yearlyData }) {
   return (
     <section>
-    <h2 style={{
-  fontFamily: '"Bubblicious", sans-serif',
-  fontSize: 'clamp(28px, 5vw, 48px)',
-  color: 'white',
-  textAlign: 'center',
-  textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
-  marginBottom: '24px',
-}}>
-  Data Breakdown
-</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="lg:col-span-2">
-          <DailyChart entries={entries} />
+      <h2 style={{
+        fontFamily: '"Bubblicious", sans-serif',
+        fontSize: 'clamp(28px, 5vw, 48px)',
+        color: 'white',
+        textAlign: 'center',
+        textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
+        marginBottom: '24px',
+      }}>
+        Data Breakdown
+      </h2>
+      <div className="flex flex-col gap-4">
+
+        {/* Daily — full width */}
+        <DailyChart entries={entries} />
+
+        {/* Monthly progress + Yearly side by side, equal height */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', alignItems: 'stretch' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <MonthlyProgressChart monthlyData={monthlyData} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <YearlyAndMonthlyChart monthlyData={monthlyData} yearlyData={yearlyData} />
+          </div>
         </div>
-        <MonthlyProgressChart monthlyData={monthlyData} />
-        <YearlyAndMonthlyChart monthlyData={monthlyData} yearlyData={yearlyData} />
+
       </div>
     </section>
   )
