@@ -356,17 +356,7 @@ export default function Charts({ entries, monthlyData, yearlyData }) {
         }}>
           Data Breakdown
         </h2>
-        <img
-          src="/glasses_hello_kitty.jpg"
-          alt=""
-          aria-hidden="true"
-          style={{
-            width: '56px', height: '56px', objectFit: 'cover',
-            borderRadius: '999px', border: '2px solid #FF2D9B',
-            boxShadow: '0 0 16px rgba(255,45,155,0.4)',
-            transform: 'scaleX(-1)',
-          }}
-        />
+    
       </div>
 
       <div className="flex flex-col gap-4">
