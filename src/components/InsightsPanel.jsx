@@ -298,7 +298,8 @@ function GreatestHits() {
 export default function InsightsPanel() {
   return (
     <section>
- <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '24px' }}>
+ <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
   <img
     src="/kitty_dance.gif"
     alt="dancing hello kitty"

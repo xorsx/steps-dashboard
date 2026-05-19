@@ -411,7 +411,8 @@ export default function Charts({ entries, monthlyData, yearlyData }) {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <MonthlyProgressChart monthlyData={monthlyData} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
             <YearlyAndMonthlyChart monthlyData={monthlyData} yearlyData={yearlyData} />
           </div>
         </div>

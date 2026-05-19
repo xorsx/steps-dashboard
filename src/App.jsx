@@ -82,8 +82,8 @@ export default function App() {
     <div className="min-h-screen">
       <Header />
 
-   <main style={{ maxWidth: '1600px', margin: '0 auto', padding: '48px 24px 60px' }}
-      className="flex flex-col gap-10">
+<main style={{ maxWidth: '1600px', margin: '0 auto', padding: '48px 16px 60px' }}
+      className="flex flex-col gap-8 sm:gap-10">
         <SummaryCards entries={entries} />
         <Charts entries={entries} monthlyData={monthlyData} yearlyData={yearlyData} />
         <InsightsPanel />
