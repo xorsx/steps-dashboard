@@ -7,12 +7,10 @@ import {
 import {
   GOAL, GOAL_5K, GOAL_10K,
   getDailyChartData,
-  getWeekdayAverages,
   getMonthlyChartData,
   getYearlyChartData,
 } from '../utils/calculations.js'
 
-// ── Y2K-friendly palette ──────────────────────────────────────
 const C = {
   pink:    '#FF2D9B',
   teal:    '#00C9B1',
@@ -30,10 +28,8 @@ const axisStyle = {
   tickLine: false,
 }
 
-// ── Custom tooltip ────────────────────────────────────────────
 function WindowTooltip({ active, payload, label }) {
   if (!active || !payload || !payload.length) return null
-
   return (
     <div style={{
       background: 'rgba(255,255,255,0.95)',
@@ -44,7 +40,6 @@ function WindowTooltip({ active, payload, label }) {
       overflow: 'hidden',
       minWidth: '160px',
     }}>
-      {/* title bar */}
       <div style={{
         background: 'linear-gradient(135deg, #FF2D9B 0%, #d4006e 100%)',
         padding: '6px 12px',
@@ -53,48 +48,28 @@ function WindowTooltip({ active, payload, label }) {
         justifyContent: 'space-between',
         borderBottom: '1px solid rgba(0,0,0,0.1)',
       }}>
-        <span style={{
-          fontFamily: '"Bubblicious", sans-serif',
-          fontSize: '12px',
-          color: 'white',
-        }}>
+        <span style={{ fontFamily: '"Bubblicious", sans-serif', fontSize: '12px', color: 'white' }}>
           {label}
         </span>
         <div style={{ display: 'flex', gap: '4px' }}>
-          <span style={{
-            width: '12px', height: '12px', borderRadius: '999px',
-            background: 'rgba(255,255,255,0.35)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '7px', color: 'rgba(255,255,255,0.8)', cursor: 'default',
-          }}>─</span>
-          <span style={{
-            width: '12px', height: '12px', borderRadius: '999px',
-            background: 'rgba(255,255,255,0.35)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '7px', color: 'rgba(255,255,255,0.8)', cursor: 'default',
-          }}>✕</span>
+          {['─','✕'].map((s, i) => (
+            <span key={i} style={{
+              width: '12px', height: '12px', borderRadius: '999px',
+              background: 'rgba(255,255,255,0.35)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '7px', color: 'rgba(255,255,255,0.8)', cursor: 'default',
+            }}>{s}</span>
+          ))}
         </div>
       </div>
-      {/* body */}
       <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {payload.map((p, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
             <span style={{
-              fontFamily: '"DM Sans", sans-serif',
-              fontSize: '11px',
-              color: '#6D28D9',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}>
-              {p.name === 'steps' || p.name === 'total' || p.name === 'avg' ? 'Steps' : p.name}
-            </span>
-            <span style={{
-              fontFamily: '"VT323", monospace',
-              fontSize: '22px',
-              color: p.color || '#1A0030',
-              lineHeight: 1,
-            }}>
+              fontFamily: '"DM Sans", sans-serif', fontSize: '11px', color: '#6D28D9',
+              fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em',
+            }}>Steps</span>
+            <span style={{ fontFamily: '"VT323", monospace', fontSize: '22px', color: p.color || '#1A0030', lineHeight: 1 }}>
               {typeof p.value === 'number' ? p.value.toLocaleString() : p.value ?? 'No data'}
             </span>
           </div>
@@ -104,21 +79,12 @@ function WindowTooltip({ active, payload, label }) {
   )
 }
 
-// ── Chart card wrapper ────────────────────────────────────────
 function ChartCard({ title, subtitle, children, barStyle = 'pink' }) {
-  const bars = {
-    pink:   'win-bar',
-    teal:   'win-bar-teal',
-    amber:  'win-bar-amber',
-    purple: 'win-bar-purple',
-  }
+  const bars = { pink: 'win-bar', teal: 'win-bar-teal', amber: 'win-bar-amber', purple: 'win-bar-purple' }
   return (
     <div className="win" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div className={bars[barStyle] ?? 'win-bar'}>
-        <span style={{
-          fontFamily: '"Bubblicious", sans-serif',
-          fontSize: 'clamp(14px, 1.8vw, 18px)',
-        }}>
+        <span style={{ fontFamily: '"Bubblicious", sans-serif', fontSize: 'clamp(14px, 1.8vw, 18px)' }}>
           {title}
         </span>
         <div className="chrome-btns">
@@ -156,20 +122,16 @@ function Legend({ color, label, dashed }) {
   )
 }
 
-// ── 1. Daily ──────────────────────────────────────────────────
 function DailyChart({ entries }) {
   const data = getDailyChartData(entries, 30)
   return (
-    <ChartCard title="This Month" barStyle="pink">
+    <ChartCard title="Daily Steps — Last 30 Days" barStyle="pink">
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} barCategoryGap="28%" margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={C.grid} />
           <XAxis dataKey="date" {...axisStyle} interval={5} />
           <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-         <Tooltip
-  content={<WindowTooltip />}
-  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-/>
+          <Tooltip content={<WindowTooltip />} cursor={{ fill: 'rgba(167,139,250,0.15)' }} />
           <ReferenceLine y={GOAL} stroke={C.teal} strokeDasharray="5 3" strokeWidth={2} />
           <Bar dataKey="steps" radius={[6, 6, 0, 0]}>
             {data.map((d, i) => (
@@ -179,19 +141,18 @@ function DailyChart({ entries }) {
         </BarChart>
       </ResponsiveContainer>
       <div className="flex gap-4 mt-3 flex-wrap">
-        <Legend color={C.teal}  label="Goal met" />
-        <Legend color={C.pink}  label="Below goal" />
-        <Legend color={C.teal}  label="10k line" dashed />
+        <Legend color={C.teal} label="Goal met" />
+        <Legend color={C.pink} label="Below goal" />
+        <Legend color={C.teal} label="10k line" dashed />
       </div>
     </ChartCard>
   )
 }
 
-// ── 2. Monthly Progress (Jan–Apr) ─────────────────────────────
 function MonthlyProgressChart({ monthlyData }) {
   const MONTHLY_GOAL = 300_000
-  const months  = ['2026-01','2026-02','2026-03','2026-04']
-  const labels  = ['January','February','March','April']
+  const months = ['2026-01','2026-02','2026-03','2026-04','2026-05']
+  const labels = ['January','February','March','April','May']
 
   const data = months.map((ym, i) => {
     const row   = monthlyData.find(r => r.date.startsWith(ym))
@@ -201,16 +162,13 @@ function MonthlyProgressChart({ monthlyData }) {
   })
 
   return (
-    <ChartCard title="This Year" subtitle="Jan–Apr · goal is 300,000 steps/month" barStyle="teal">
+    <ChartCard title="Monthly Totals — 2026" subtitle="Goal is 300,000 steps per month" barStyle="teal">
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} barCategoryGap="30%" margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={C.grid} />
           <XAxis dataKey="month" {...axisStyle} />
           <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-          <Tooltip
-  content={<WindowTooltip />}
-  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-/>
+          <Tooltip content={<WindowTooltip />} cursor={{ fill: 'rgba(167,139,250,0.15)' }} />
           <ReferenceLine y={MONTHLY_GOAL} stroke={C.pink} strokeDasharray="5 3" strokeWidth={2} />
           <Bar dataKey="total" radius={[6, 6, 0, 0]}>
             {data.map((d, i) => (
@@ -219,14 +177,11 @@ function MonthlyProgressChart({ monthlyData }) {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <div className="grid grid-cols-4 gap-2 mt-3">
+      <div className="grid grid-cols-5 gap-1 mt-3">
         {data.map((d, i) => (
           <div key={i} className="text-center">
-            <span style={{
-              fontFamily: '"VT323", monospace',
-              fontSize: '22px',
-              color: d.pct >= 100 ? C.teal : d.pct >= 70 ? C.amber : C.pink,
-            }}>
+            <span style={{ fontFamily: '"VT323", monospace', fontSize: '20px',
+                           color: d.pct >= 100 ? C.teal : d.pct >= 70 ? C.amber : C.pink }}>
               {d.pct}%
             </span>
             <p style={{ fontFamily: '"DM Sans", sans-serif', fontSize: '10px', color: '#6D28D9', marginTop: '2px' }}>
@@ -244,7 +199,6 @@ function MonthlyProgressChart({ monthlyData }) {
   )
 }
 
-// ── 3. Yearly + Monthly drill-down ────────────────────────────
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
@@ -252,16 +206,16 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
   const [selectedYear, setSelectedYear] = useState(null)
 
   const monthlyDrillData = selectedYear
-    ? (() => {
+    ? MONTH_NAMES.map((name, i) => {
         const goal = selectedYear >= '2026' ? GOAL_10K : GOAL_5K
-        return MONTH_NAMES.map((name, i) => {
-          const mm  = String(i + 1).padStart(2, '0')
-          const key = `${selectedYear}-${mm}`
-          const row = monthlyData.find(r => r.date.startsWith(key))
-          const daysInMonth = new Date(Number(selectedYear), i + 1, 0).getDate()
-          return { month: name, total: row ? row.steps : null, goal: goal * daysInMonth }
-        })
-      })()
+        const mm   = String(i + 1).padStart(2, '0')
+        const row  = monthlyData.find(r => r.date.startsWith(`${selectedYear}-${mm}`))
+        return {
+          month: name,
+          total: row ? row.steps : null,
+          goal:  goal * new Date(Number(selectedYear), i + 1, 0).getDate(),
+        }
+      })
     : null
 
   const handleBarClick = (data) => {
@@ -274,8 +228,8 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
       <div style={{ flex: selectedYear ? '0 0 auto' : '1', display: 'flex', flexDirection: 'column' }}>
         <ChartCard
-          title="Over the years"
-          subtitle={selectedYear ? 'Click same bar or ✕ to close' : 'Click any bar to see monthly breakdown'}
+          title="Yearly Step Totals"
+          subtitle={selectedYear ? 'Click same bar or ✕ to close' : 'Click any bar for monthly breakdown'}
           barStyle="amber"
         >
           <ResponsiveContainer width="100%" height={selectedYear ? 180 : 260}>
@@ -289,10 +243,7 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
               <CartesianGrid vertical={false} stroke={C.grid} />
               <XAxis dataKey="year" {...axisStyle} />
               <YAxis {...axisStyle} tickFormatter={v => `${(v / 1_000_000).toFixed(1)}M`} />
-             <Tooltip
-  content={<WindowTooltip />}
-  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-/>
+              <Tooltip content={<WindowTooltip />} cursor={{ fill: 'rgba(167,139,250,0.15)' }} />
               <Bar dataKey="steps" radius={[6, 6, 0, 0]}>
                 {yearlyChartData.map((d, i) => (
                   <Cell
@@ -333,10 +284,7 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
                 <CartesianGrid vertical={false} stroke={C.grid} />
                 <XAxis dataKey="month" {...axisStyle} />
                 <YAxis {...axisStyle} tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
-                <Tooltip
-  content={<WindowTooltip />}
-  cursor={{ fill: 'rgba(167,139,250,0.15)' }}
-/>
+                <Tooltip content={<WindowTooltip />} cursor={{ fill: 'rgba(167,139,250,0.15)' }} />
                 <Bar dataKey="total" radius={[6, 6, 0, 0]}>
                   {monthlyDrillData.map((d, i) => (
                     <Cell
@@ -360,63 +308,52 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
   )
 }
 
-// ── main export ───────────────────────────────────────────────
 export default function Charts({ entries, monthlyData, yearlyData }) {
   return (
     <section>
-   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '24px' }}>
-  <img
-    src="/glasses_hello_kitty.jpg"
-    alt="hello kitty with glasses"
-    style={{
-      width: '56px',
-      height: '56px',
-      objectFit: 'cover',
-      borderRadius: '999px',
-      border: '2px solid #FF2D9B',
-      boxShadow: '0 0 16px rgba(255,45,155,0.4)',
-    }}
-  />
-  <h2 style={{
-    fontFamily: '"Bubblicious", sans-serif',
-    fontSize: 'clamp(28px, 5vw, 48px)',
-    color: 'white',
-    textAlign: 'center',
-    textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
-  }}>
-    Data Breakdown
-  </h2>
-  <img
-    src="/glasses_hello_kitty.jpg"
-    alt=""
-    aria-hidden="true"
-    style={{
-      width: '56px',
-      height: '56px',
-      objectFit: 'cover',
-      borderRadius: '999px',
-      border: '2px solid #FF2D9B',
-      boxShadow: '0 0 16px rgba(255,45,155,0.4)',
-      transform: 'scaleX(-1)',
-    }}
-  />
-</div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+        <img
+          src="/glasses_hello_kitty.jpg"
+          alt="hello kitty with glasses"
+          style={{
+            width: '56px', height: '56px', objectFit: 'cover',
+            borderRadius: '999px', border: '2px solid #FF2D9B',
+            boxShadow: '0 0 16px rgba(255,45,155,0.4)',
+          }}
+        />
+        <h2 style={{
+          fontFamily: '"Bubblicious", sans-serif',
+          fontSize: 'clamp(28px, 5vw, 48px)',
+          color: 'white',
+          textAlign: 'center',
+          textShadow: '0 2px 20px rgba(255,45,155,0.5), 0 0 40px rgba(124,58,237,0.4)',
+        }}>
+          Data Breakdown
+        </h2>
+        <img
+          src="/glasses_hello_kitty.jpg"
+          alt=""
+          aria-hidden="true"
+          style={{
+            width: '56px', height: '56px', objectFit: 'cover',
+            borderRadius: '999px', border: '2px solid #FF2D9B',
+            boxShadow: '0 0 16px rgba(255,45,155,0.4)',
+            transform: 'scaleX(-1)',
+          }}
+        />
+      </div>
+
       <div className="flex flex-col gap-4">
-
-        {/* Daily — full width */}
         <DailyChart entries={entries} />
-
-        {/* Monthly progress + Yearly side by side, equal height */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'grid-cols-1 lg:grid-cols-2', gap: '16px', alignItems: 'stretch' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" style={{ alignItems: 'stretch' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <MonthlyProgressChart monthlyData={monthlyData} />
           </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <YearlyAndMonthlyChart monthlyData={monthlyData} yearlyData={yearlyData} />
           </div>
         </div>
-
       </div>
     </section>
   )
