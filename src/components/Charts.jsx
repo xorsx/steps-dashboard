@@ -125,7 +125,16 @@ function Legend({ color, label, dashed }) {
 function DailyChart({ entries }) {
   const data = getDailyChartData(entries, 30)
   return (
-    <ChartCard title="Daily Steps — Last 30 Days" barStyle="pink">
+    <ChartCard
+  title={
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <img src="/walking_hello_kitty.gif" alt="" aria-hidden="true"
+           style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+      This Month
+    </div>
+  }
+  barStyle="pink"
+>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} barCategoryGap="28%" margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={C.grid} />
@@ -162,7 +171,17 @@ function MonthlyProgressChart({ monthlyData }) {
   })
 
   return (
-    <ChartCard title="Monthly Totals — 2026" subtitle="Goal is 300,000 steps per month" barStyle="teal">
+    <ChartCard
+  title={
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <img src="/pompom_purin_walking.gif" alt="" aria-hidden="true"
+           style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+      2026 Monthly Totals
+    </div>
+  }
+  subtitle="Goal is 300,000 steps per month"
+  barStyle="teal"
+>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data} barCategoryGap="30%" margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
           <CartesianGrid vertical={false} stroke={C.grid} />
@@ -227,11 +246,17 @@ function YearlyAndMonthlyChart({ monthlyData, yearlyData }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
       <div style={{ flex: selectedYear ? '0 0 auto' : '1', display: 'flex', flexDirection: 'column' }}>
-        <ChartCard
-          title="Yearly Step Totals"
-          subtitle={selectedYear ? 'Click same bar or ✕ to close' : 'Click any bar for monthly breakdown'}
-          barStyle="amber"
-        >
+     <ChartCard
+  title={
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <img src="/walking_cinnamoroll_friends.gif" alt="" aria-hidden="true"
+           style={{ width: '48px', height: '24px', objectFit: 'contain' }} />
+      Over the Years
+    </div>
+  }
+  subtitle={selectedYear ? 'Click same bar or ✕ to close' : 'Click any bar for monthly breakdown'}
+  barStyle="amber"
+>
           <ResponsiveContainer width="100%" height={selectedYear ? 180 : 260}>
             <BarChart
               data={yearlyChartData}
